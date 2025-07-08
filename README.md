@@ -18,7 +18,8 @@ npx hardhat test
 
 > `25 passing` test cases covering deployment, rewards, staking, slashing, emergency handling, and access control.
 
-## ![Sample Output](image.png)
+Output Sample Screenshot:
+## ![Sample Output](OutputScreenshot.png)
 
 ## Installation
 
