@@ -18,7 +18,7 @@ npx hardhat test
 
 > `25 passing` test cases covering deployment, rewards, staking, slashing, emergency handling, and access control.
 
----
+## ![Sample Output](image.png)
 
 ## Installation
 
@@ -55,7 +55,3 @@ Maintained by \[SriKrishna Pejathaya P S].
 - [OpenZeppelin](https://openzeppelin.com/contracts/)
 - [Hardhat](https://hardhat.org/)
 - [IPFS](https://ipfs.tech/)
-
-```
-
-```
