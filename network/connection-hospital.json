@@ -1,0 +1,159 @@
+{
+    "name": "medical-network-hospital",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Hospital",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Hospital": {
+            "mspid": "HospitalMSP",
+            "peers": [
+                "peer0.hospital.medical.com",
+                "peer1.hospital.medical.com"
+            ],
+            "certificateAuthorities": [
+                "ca.hospital.medical.com"
+            ]
+        },
+        "Insurance": {
+            "mspid": "InsuranceMSP",
+            "peers": [
+                "peer0.insurance.medical.com",
+                "peer1.insurance.medical.com"
+            ]
+        },
+        "Regulatory": {
+            "mspid": "RegulatoryMSP",
+            "peers": [
+                "peer0.regulatory.medical.com",
+                "peer1.regulatory.medical.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer0.orderer.medical.com": {
+            "url": "grpcs://localhost:7050",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\n...certificate content...\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer0.orderer.medical.com",
+                "hostnameOverride": "orderer0.orderer.medical.com"
+            }
+        }
+    },
+    "peers": {
+        "peer0.hospital.medical.com": {
+            "url": "grpcs://localhost:7051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\n...certificate content...\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.hospital.medical.com",
+                "hostnameOverride": "peer0.hospital.medical.com"
+            }
+        },
+        "peer1.hospital.medical.com": {
+            "url": "grpcs://localhost:7053",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\n...certificate content...\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.hospital.medical.com",
+                "hostnameOverride": "peer1.hospital.medical.com"
+            }
+        },
+        "peer0.insurance.medical.com": {
+            "url": "grpcs://localhost:8051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\n...certificate content...\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.insurance.medical.com",
+                "hostnameOverride": "peer0.insurance.medical.com"
+            }
+        },
+        "peer0.regulatory.medical.com": {
+            "url": "grpcs://localhost:9051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\n...certificate content...\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.regulatory.medical.com",
+                "hostnameOverride": "peer0.regulatory.medical.com"
+            }
+        }
+    },
+    "channels": {
+        "medical-channel": {
+            "orderers": [
+                "orderer0.orderer.medical.com"
+            ],
+            "peers": {
+                "peer0.hospital.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer0.insurance.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer0.regulatory.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        },
+        "private-data-channel": {
+            "orderers": [
+                "orderer0.orderer.medical.com"
+            ],
+            "peers": {
+                "peer0.hospital.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer0.regulatory.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        },
+        "insurance-channel": {
+            "orderers": [
+                "orderer0.orderer.medical.com"
+            ],
+            "peers": {
+                "peer0.hospital.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer0.insurance.medical.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    }
+}

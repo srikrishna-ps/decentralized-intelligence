@@ -1,0 +1,215 @@
+Organizations:
+  - &OrdererOrg
+    Name: OrdererMSP
+    ID: OrdererMSP
+    MSPDir: ../organizations/orderer/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer0.orderer.medical.com:7050
+      - orderer1.orderer.medical.com:7051
+      - orderer2.orderer.medical.com:7052
+
+  - &Hospital
+    Name: HospitalMSP
+    ID: HospitalMSP
+    MSPDir: ../organizations/hospital/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('HospitalMSP.admin', 'HospitalMSP.peer', 'HospitalMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('HospitalMSP.admin', 'HospitalMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('HospitalMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('HospitalMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.hospital.medical.com
+        Port: 7051
+
+  - &Insurance
+    Name: InsuranceMSP
+    ID: InsuranceMSP
+    MSPDir: ../organizations/insurance/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.peer', 'InsuranceMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.insurance.medical.com
+        Port: 8051
+
+  - &Regulatory
+    Name: RegulatoryMSP
+    ID: RegulatoryMSP
+    MSPDir: ../organizations/regulatory/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('RegulatoryMSP.admin', 'RegulatoryMSP.peer', 'RegulatoryMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('RegulatoryMSP.admin', 'RegulatoryMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('RegulatoryMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('RegulatoryMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.regulatory.medical.com
+        Port: 9051
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_0: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer0.orderer.medical.com:7050
+    - orderer1.orderer.medical.com:7051
+    - orderer2.orderer.medical.com:7052
+  EtcdRaft:
+    Consenters:
+      - Host: orderer0.orderer.medical.com
+        Port: 7050
+        ClientTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
+        ServerTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
+      - Host: orderer1.orderer.medical.com
+        Port: 7051
+        ClientTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
+        ServerTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
+      - Host: orderer2.orderer.medical.com
+        Port: 7052
+        ClientTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
+        ServerTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+Profiles:
+  MedicalOrdererGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
+    Consortiums:
+      MedicalConsortium:
+        Organizations:
+          - *Hospital
+          - *Insurance
+          - *Regulatory
+
+  MedicalChannel:
+    Consortium: MedicalConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Hospital
+        - *Insurance
+        - *Regulatory
+      Capabilities:
+        <<: *ApplicationCapabilities
+
+  PrivateDataChannel:
+    Consortium: MedicalConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Hospital
+        - *Regulatory
+      Capabilities:
+        <<: *ApplicationCapabilities
+
+  InsuranceChannel:
+    Consortium: MedicalConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Hospital
+        - *Insurance
+      Capabilities:
+        <<: *ApplicationCapabilities
