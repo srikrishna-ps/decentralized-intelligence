@@ -11,12 +11,13 @@
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.0.0",
-    "hardhat": "^2.25.0"
+    "hardhat": "^2.26.3"
   },
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.3"
+    "@openzeppelin/contracts": "^4.9.3",
+    "ipfs-http-client": "^60.0.1"
   }
 }
