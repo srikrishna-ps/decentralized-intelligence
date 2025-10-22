@@ -25,9 +25,13 @@ PeerOrgs:
     Users:
       Count: 3
 
-  - Name: Regulatory
-    Domain: regulatory.medical.com
+  - Name: Admin
+    Domain: admin.medical.com
     EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
     Template:
       Count: 2
     Users:

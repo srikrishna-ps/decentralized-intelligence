@@ -2,7 +2,7 @@ Organizations:
   - &OrdererOrg
     Name: OrdererMSP
     ID: OrdererMSP
-    MSPDir: ../organizations/orderer/msp
+    MSPDir: ../organizations/ordererOrganizations/orderer.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -21,7 +21,7 @@ Organizations:
   - &Hospital
     Name: HospitalMSP
     ID: HospitalMSP
-    MSPDir: ../organizations/hospital/msp
+    MSPDir: ../organizations/peerOrganizations/hospital.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -42,7 +42,7 @@ Organizations:
   - &Insurance
     Name: InsuranceMSP
     ID: InsuranceMSP
-    MSPDir: ../organizations/insurance/msp
+    MSPDir: ../organizations/peerOrganizations/insurance.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -60,25 +60,57 @@ Organizations:
       - Host: peer0.insurance.medical.com
         Port: 8051
 
-  - &Regulatory
-    Name: RegulatoryMSP
-    ID: RegulatoryMSP
-    MSPDir: ../organizations/regulatory/msp
+  - &Admin
+    Name: AdminMSP
+    ID: AdminMSP
+    MSPDir: ../organizations/peerOrganizations/admin.medical.com/msp
     Policies:
       Readers:
         Type: Signature
-        Rule: "OR('RegulatoryMSP.admin', 'RegulatoryMSP.peer', 'RegulatoryMSP.client')"
+        Rule: "OR('AdminMSP.admin', 'AdminMSP.peer', 'AdminMSP.client')"
       Writers:
         Type: Signature
-        Rule: "OR('RegulatoryMSP.admin', 'RegulatoryMSP.client')"
+        Rule: "OR('AdminMSP.admin', 'AdminMSP.client')"
       Admins:
         Type: Signature
-        Rule: "OR('RegulatoryMSP.admin')"
+        Rule: "OR('AdminMSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('RegulatoryMSP.peer')"
+        Rule: "OR('AdminMSP.peer')"
     AnchorPeers:
-      - Host: peer0.regulatory.medical.com
+      - Host: peer0.admin.medical.com
+        Port: 9051
+        Type: Signature
+        Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('InsuranceMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.insurance.medical.com
+        Port: 8051
+
+  - &Admin
+    Name: AdminMSP
+    ID: AdminMSP
+    MSPDir: ../organizations/peerOrganizations/admin.medical.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('AdminMSP.admin')"
+      Writers:
+        Type: Signature
+        Rule: "OR('AdminMSP.admin')"
+      Admins:
+        Type: Signature
+        Rule: "OR('AdminMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('AdminMSP.admin')"
+    AnchorPeers:
+      - Host: peer0.admin.medical.com
         Port: 9051
 
 Capabilities:
@@ -91,6 +123,9 @@ Capabilities:
 
 Application: &ApplicationDefaults
   Organizations:
+    - *Hospital
+    - *Insurance
+    - *Admin
   Policies:
     Readers:
       Type: ImplicitMeta
@@ -120,16 +155,16 @@ Orderer: &OrdererDefaults
     Consenters:
       - Host: orderer0.orderer.medical.com
         Port: 7050
-        ClientTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
+        ClientTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/tls/server.crt
+        ServerTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/tls/server.crt
       - Host: orderer1.orderer.medical.com
         Port: 7051
-        ClientTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
+        ClientTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/tls/server.crt
+        ServerTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/tls/server.crt
       - Host: orderer2.orderer.medical.com
         Port: 7052
-        ClientTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
+        ClientTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/tls/server.crt
+        ServerTLSCert: organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/tls/server.crt
   BatchTimeout: 2s
   BatchSize:
     MaxMessageCount: 10
@@ -183,6 +218,12 @@ Profiles:
   MedicalChannel:
     Consortium: MedicalConsortium
     <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
     Application:
       <<: *ApplicationDefaults
       Organizations:

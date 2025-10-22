@@ -1,0 +1,35 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.example.com
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
+      - Hostname: orderer2
+      - Hostname: orderer3
+      - Hostname: orderer4
+      - Hostname: orderer5
+
+PeerOrgs:
+  - Name: Hospital
+    Domain: hospital.example.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  
+  - Name: Insurance
+    Domain: insurance.example.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+
+  - Name: Regulatory
+    Domain: regulatory.example.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
