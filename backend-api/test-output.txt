@@ -1,0 +1,8 @@
+﻿Testing Health Check...
+Health: { status: 'ok', timestamp: '2025-11-21T10:04:26.207Z' }
+
+Testing Grant Consent (EVM)...
+Consent Result: {
+  "success": false,
+  "error": "Do not know how to serialize a BigInt"
+}
