@@ -2,7 +2,8 @@ node_modules
 .env
 .env.local
 .env.crypto
-
+.env.example
+frontend/ENV_TEMPLATE.txt
 # Hardhat files
 /cache
 /artifacts
