@@ -15,7 +15,9 @@ contract MedicalAccessControl is AccessControl, ReentrancyGuard, Pausable {
     bytes32 public constant PATIENT_ROLE = keccak256("PATIENT_ROLE");
     bytes32 public constant DOCTOR_ROLE = keccak256("DOCTOR_ROLE");
     bytes32 public constant LAB_ROLE = keccak256("LAB_ROLE");
+    bytes32 public constant DIAGNOSTIC_CENTER_ROLE = keccak256("DIAGNOSTIC_CENTER_ROLE");
     bytes32 public constant HOSPITAL_ROLE = keccak256("HOSPITAL_ROLE");
+    bytes32 public constant INSURER_ROLE = keccak256("INSURER_ROLE");
     bytes32 public constant EMERGENCY_ROLE = keccak256("EMERGENCY_ROLE");
     bytes32 public constant SYSTEM_ADMIN_ROLE = keccak256("SYSTEM_ADMIN_ROLE");
 

@@ -110,8 +110,8 @@ class CrossChannelCommunicator {
             }
 
             this.isMonitoring = true;
-            this.logger.info('Blockchain monitoring started', { 
-                channels: channels 
+            this.logger.info('Blockchain monitoring started', {
+                channels: channels
             });
 
         } catch (error) {
@@ -126,7 +126,7 @@ class CrossChannelCommunicator {
     async monitorChannel(channelName) {
         try {
             const network = await this.gateway.getNetwork(channelName);
-            
+
             // Block listener for transaction events
             const blockListener = async (event) => {
                 await this.processBlockEvent(channelName, event);
@@ -316,7 +316,7 @@ class CrossChannelCommunicator {
         const currentTime = Date.now();
 
         // Get recent access events for this user
-        const recentAccess = this.auditTrail.filter(event => 
+        const recentAccess = this.auditTrail.filter(event =>
             event.eventType === 'DATA_ACCESS' &&
             event.data.accessorId === userId &&
             (currentTime - new Date(event.timestamp).getTime()) < timeWindow
@@ -341,7 +341,7 @@ class CrossChannelCommunicator {
         const timeWindow = 300000; // 5 minutes
         const currentTime = Date.now();
 
-        const recentFailures = this.auditTrail.filter(event => 
+        const recentFailures = this.auditTrail.filter(event =>
             event.eventType === 'ACCESS_DENIED' &&
             event.data.accessorId === userId &&
             (currentTime - new Date(event.timestamp).getTime()) < timeWindow
@@ -487,7 +487,7 @@ class CrossChannelCommunicator {
     async persistAuditEntry(auditEntry) {
         const auditFile = path.join(__dirname, 'logs', 'audit-trail.jsonl');
         const auditLine = JSON.stringify(auditEntry) + '\n';
-        
+
         fs.appendFileSync(auditFile, auditLine);
     }
 
@@ -498,27 +498,27 @@ class CrossChannelCommunicator {
         let filteredTrail = [...this.auditTrail];
 
         if (filters.eventType) {
-            filteredTrail = filteredTrail.filter(entry => 
+            filteredTrail = filteredTrail.filter(entry =>
                 entry.eventType === filters.eventType
             );
         }
 
         if (filters.startDate) {
             const startDate = new Date(filters.startDate);
-            filteredTrail = filteredTrail.filter(entry => 
+            filteredTrail = filteredTrail.filter(entry =>
                 new Date(entry.timestamp) >= startDate
             );
         }
 
         if (filters.endDate) {
             const endDate = new Date(filters.endDate);
-            filteredTrail = filteredTrail.filter(entry => 
+            filteredTrail = filteredTrail.filter(entry =>
                 new Date(entry.timestamp) <= endDate
             );
         }
 
         if (filters.userId) {
-            filteredTrail = filteredTrail.filter(entry => 
+            filteredTrail = filteredTrail.filter(entry =>
                 entry.data.userId === filters.userId ||
                 entry.data.accessorId === filters.userId
             );
@@ -547,12 +547,12 @@ class CrossChannelCommunicator {
 
         // Event breakdown
         auditData.forEach(entry => {
-            report.eventBreakdown[entry.eventType] = 
+            report.eventBreakdown[entry.eventType] =
                 (report.eventBreakdown[entry.eventType] || 0) + 1;
         });
 
         // Security alerts
-        report.securityAlerts = auditData.filter(entry => 
+        report.securityAlerts = auditData.filter(entry =>
             entry.eventType === 'SECURITY_ALERT'
         );
 
@@ -608,4 +608,4 @@ class CrossChannelCommunicator {
     }
 }
 
-module.exports = BlockchainEventLogger;
+module.exports = CrossChannelCommunicator;

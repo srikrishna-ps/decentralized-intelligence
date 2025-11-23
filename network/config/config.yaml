@@ -1,0 +1,3 @@
+# Minimal config for configtxgen
+# This file is required by configtxgen even when using -configPath
+

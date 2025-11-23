@@ -1,32 +1,22 @@
 const mongoose = require('mongoose');
 
-let isConnected = false;
-
-async function connectDB() {
-    if (isConnected) {
-        console.log('Using existing database connection');
-        return;
-    }
-
+const connectDB = async () => {
     try {
-        const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/medical-blockchain';
+        const mongoURI = process.env.MONGODB_URI;
 
-        await mongoose.connect(mongoUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        if (!mongoURI) {
+            throw new Error('MONGODB_URI is not defined in environment variables');
+        }
 
-        isConnected = true;
+        await mongoose.connect(mongoURI);
+
         console.log('✅ MongoDB connected successfully');
+        console.log('📊 Database:', mongoose.connection.db.databaseName);
+        console.log('🔗 Host:', mongoose.connection.host);
     } catch (error) {
         console.error('❌ MongoDB connection error:', error.message);
-        // For development, continue without MongoDB
-        if (process.env.NODE_ENV === 'development') {
-            console.log('⚠️  Continuing without MongoDB (development mode)');
-        } else {
-            throw error;
-        }
+        process.exit(1);
     }
-}
+};
 
-module.exports = { connectDB };
+module.exports = connectDB;

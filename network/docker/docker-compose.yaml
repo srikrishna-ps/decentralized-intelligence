@@ -1,15 +1,15 @@
-version: "3.7"
-
 volumes:
-  orderer0.orderer.medical.com:
-  orderer1.orderer.medical.com:
-  orderer2.orderer.medical.com:
-  peer0.hospital.medical.com:
-  peer1.hospital.medical.com:
-  peer0.insurance.medical.com:
-  peer1.insurance.medical.com:
-  peer0.regulatory.medical.com:
-  peer1.regulatory.medical.com:
+  orderer0_orderer_medical_com:
+  orderer1_orderer_medical_com:
+  orderer2_orderer_medical_com:
+  peer0_hospital_medical_com:
+  peer1_hospital_medical_com:
+  peer0_insurance_medical_com:
+  peer1_insurance_medical_com:
+  peer0_regulatory_medical_com:
+  peer1_regulatory_medical_com:
+  ipfs_data:
+
 
 networks:
   medical:
@@ -17,9 +17,9 @@ networks:
 
 services:
   # Orderer Services
-  orderer0.orderer.medical.com:
+  orderer0_orderer_medical_com:
     container_name: orderer0.orderer.medical.com
-    image: hyperledger/fabric-orderer:2.5.4
+    image: hyperledger/fabric-orderer:2.2.14
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -46,10 +46,9 @@ services:
     working_dir: /root
     command: orderer
     volumes:
-      - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-      - ../organizations/orderer/orderers/orderer0.orderer.medical.com/msp:/var/hyperledger/orderer/msp
-      - ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
-      - orderer0.orderer.medical.com:/var/hyperledger/production/orderer
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/msp:/var/hyperledger/orderer/msp
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
+      - orderer0_orderer_medical_com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
       - 7053:7053
@@ -57,9 +56,9 @@ services:
     networks:
       - medical
 
-  orderer1.orderer.medical.com:
+  orderer1_orderer_medical_com:
     container_name: orderer1.orderer.medical.com
-    image: hyperledger/fabric-orderer:2.5.4
+    image: hyperledger/fabric-orderer:2.2.14
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -86,10 +85,9 @@ services:
     working_dir: /root
     command: orderer
     volumes:
-      - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-      - ../organizations/orderer/orderers/orderer1.orderer.medical.com/msp:/var/hyperledger/orderer/msp
-      - ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
-      - orderer1.orderer.medical.com:/var/hyperledger/production/orderer
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/msp:/var/hyperledger/orderer/msp
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
+      - orderer1_orderer_medical_com:/var/hyperledger/production/orderer
     ports:
       - 7051:7051
       - 7054:7054
@@ -97,9 +95,9 @@ services:
     networks:
       - medical
 
-  orderer2.orderer.medical.com:
+  orderer2_orderer_medical_com:
     container_name: orderer2.orderer.medical.com
-    image: hyperledger/fabric-orderer:2.5.4
+    image: hyperledger/fabric-orderer:2.2.14
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -126,10 +124,9 @@ services:
     working_dir: /root
     command: orderer
     volumes:
-      - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-      - ../organizations/orderer/orderers/orderer2.orderer.medical.com/msp:/var/hyperledger/orderer/msp
-      - ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
-      - orderer2.orderer.medical.com:/var/hyperledger/production/orderer
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/msp:/var/hyperledger/orderer/msp
+      - ../organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/tls/:/var/hyperledger/orderer/tls
+      - orderer2_orderer_medical_com:/var/hyperledger/production/orderer
     ports:
       - 7052:7052
       - 7055:7055
@@ -138,9 +135,9 @@ services:
       - medical
 
   # Hospital Peers
-  peer0.hospital.medical.com:
+  peer0_hospital_medical_com:
     container_name: peer0.hospital.medical.com
-    image: hyperledger/fabric-peer:2.5.4
+    image: hyperledger/fabric-peer:2.2.14
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
@@ -159,29 +156,138 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.hospital.medical.com:7051
       - CORE_PEER_LOCALMSPID=HospitalMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.hospital.medical.com:9443
+      - CORE_METRICS_PROVIDER=prometheus
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0hospital"}
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../organizations/peerOrganizations/hospital.medical.com/peers/peer0.hospital.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/hospital.medical.com/peers/peer0.hospital.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer0_hospital_medical_com:/var/hyperledger/production
+    working_dir: /root
+    command: peer node start
+    depends_on:
+      - orderer0_orderer_medical_com
+    networks:
+      - medical
+
+  peer1_hospital_medical_com:
+    container_name: peer1.hospital.medical.com
+    image: hyperledger/fabric-peer:2.2.14
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer1.hospital.medical.com
+      - CORE_PEER_ADDRESS=peer1.hospital.medical.com:7053
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7053
+      - CORE_PEER_CHAINCODEADDRESS=peer1.hospital.medical.com:7054
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7054
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hospital.medical.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.hospital.medical.com:7053
+      - CORE_PEER_LOCALMSPID=HospitalMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=peer1.hospital.medical.com:9444
+      - CORE_METRICS_PROVIDER=prometheus
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1hospital"}
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../organizations/peerOrganizations/hospital.medical.com/peers/peer1.hospital.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/hospital.medical.com/peers/peer1.hospital.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer1_hospital_medical_com:/var/hyperledger/production
+    working_dir: /root
+    command: peer node start
+    depends_on:
+      - orderer0_orderer_medical_com
+    networks:
+      - medical
+
+  # Insurance Peers
+  peer0_insurance_medical_com:
+    container_name: peer0.insurance.medical.com
+    image: hyperledger/fabric-peer:2.2.14
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer0.insurance.medical.com
+      - CORE_PEER_ADDRESS=peer0.insurance.medical.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.insurance.medical.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.insurance.medical.com:8053
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.insurance.medical.com:8051
+      - CORE_PEER_LOCALMSPID=InsuranceMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.insurance.medical.com:9445
+      - CORE_METRICS_PROVIDER=prometheus
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0insurance"}
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../organizations/peerOrganizations/insurance.medical.com/peers/peer0.insurance.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/insurance.medical.com/peers/peer0.insurance.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer0_insurance_medical_com:/var/hyperledger/production
+    working_dir: /root
+    command: peer node start
+    depends_on:
+      - orderer0_orderer_medical_com
+    networks:
+      - medical
+
+  peer1_insurance_medical_com:
+    container_name: peer1.insurance.medical.com
+    image: hyperledger/fabric-peer:2.2.14
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer1.insurance.medical.com
+      - CORE_PEER_ADDRESS=peer1.insurance.medical.com:8053
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8053
+      - CORE_PEER_CHAINCODEADDRESS=peer1.insurance.medical.com:8054
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8054
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.insurance.medical.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.insurance.medical.com:8053
+      - CORE_PEER_LOCALMSPID=InsuranceMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_OPERATIONS_LISTENADDRESS=peer1.insurance.medical.com:9446
       - CORE_METRICS_PROVIDER=prometheus
       - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1insurance"}
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
-      - ../organizations/insurance/peers/peer1.insurance.medical.com/msp:/etc/hyperledger/fabric/msp
-      - ../organizations/insurance/peers/peer1.insurance.medical.com/tls:/etc/hyperledger/fabric/tls
-      - peer1.insurance.medical.com:/var/hyperledger/production
+      - ../organizations/peerOrganizations/insurance.medical.com/peers/peer1.insurance.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/insurance.medical.com/peers/peer1.insurance.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer1_insurance_medical_com:/var/hyperledger/production
     working_dir: /root
     command: peer node start
-    ports:
-      - 8053:8053
-      - 9446:9446
     depends_on:
-      - orderer0.orderer.medical.com
+      - orderer0_orderer_medical_com
     networks:
       - medical
 
   # Regulatory Peers
-  peer0.regulatory.medical.com:
+  peer0_regulatory_medical_com:
     container_name: peer0.regulatory.medical.com
-    image: hyperledger/fabric-peer:2.5.4
+    image: hyperledger/fabric-peer:2.2.14
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
@@ -206,22 +312,19 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
-      - ../organizations/regulatory/peers/peer0.regulatory.medical.com/msp:/etc/hyperledger/fabric/msp
-      - ../organizations/regulatory/peers/peer0.regulatory.medical.com/tls:/etc/hyperledger/fabric/tls
-      - peer0.regulatory.medical.com:/var/hyperledger/production
+      - ../organizations/peerOrganizations/regulatory.medical.com/peers/peer0.regulatory.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/regulatory.medical.com/peers/peer0.regulatory.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer0_regulatory_medical_com:/var/hyperledger/production
     working_dir: /root
     command: peer node start
-    ports:
-      - 9051:9051
-      - 9447:9447
     depends_on:
-      - orderer0.orderer.medical.com
+      - orderer0_orderer_medical_com
     networks:
       - medical
 
-  peer1.regulatory.medical.com:
+  peer1_regulatory_medical_com:
     container_name: peer1.regulatory.medical.com
-    image: hyperledger/fabric-peer:2.5.4
+    image: hyperledger/fabric-peer:2.2.14
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=medical_network
@@ -246,23 +349,35 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
-      - ../organizations/regulatory/peers/peer1.regulatory.medical.com/msp:/etc/hyperledger/fabric/msp
-      - ../organizations/regulatory/peers/peer1.regulatory.medical.com/tls:/etc/hyperledger/fabric/tls
-      - peer1.regulatory.medical.com:/var/hyperledger/production
+      - ../organizations/peerOrganizations/regulatory.medical.com/peers/peer1.regulatory.medical.com/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/regulatory.medical.com/peers/peer1.regulatory.medical.com/tls:/etc/hyperledger/fabric/tls
+      - peer1_regulatory_medical_com:/var/hyperledger/production
     working_dir: /root
     command: peer node start
-    ports:
-      - 9053:9053
-      - 9448:9448
     depends_on:
-      - orderer0.orderer.medical.com
+      - orderer0_orderer_medical_com
+    networks:
+      - medical
+
+  # IPFS Node
+  ipfs:
+    container_name: ipfs
+    image: ipfs/kubo:latest
+    environment:
+      - IPFS_PROFILE=server
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
     networks:
       - medical
 
   # CLI container for operations
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools:2.5.4
+    image: hyperledger/fabric-tools:2.2.14
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -271,20 +386,22 @@ services:
       - CORE_PEER_ADDRESS=peer0.hospital.medical.com:7051
       - CORE_PEER_LOCALMSPID=HospitalMSP
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/hospital/peers/peer0.hospital.medical.com/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/hospital/peers/peer0.hospital.medical.com/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/hospital/peers/peer0.hospital.medical.com/tls/ca.crt
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/hospital/users/Admin@hospital.medical.com/msp
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/hospital.medical.com/peers/peer0.hospital.medical.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/hospital.medical.com/peers/peer0.hospital.medical.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/hospital.medical.com/peers/peer0.hospital.medical.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/hospital.medical.com/users/Admin@hospital.medical.com/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash
+    command: /bin/sh -c "sleep infinity"
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations
       - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts
       - ../channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+      - ../configtx:/opt/gopath/src/github.com/hyperledger/fabric/peer/configtx
+      - ../config:/opt/gopath/src/github.com/hyperledger/fabric/peer/config
     depends_on:
-      - peer0.hospital.medical.com
-      - peer0.insurance.medical.com
-      - peer0.regulatory.medical.com
+      - peer0_hospital_medical_com
+      - peer0_insurance_medical_com
+      - peer0_regulatory_medical_com
     networks:
       - medical

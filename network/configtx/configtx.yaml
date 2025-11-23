@@ -2,7 +2,7 @@ Organizations:
   - &OrdererOrg
     Name: OrdererMSP
     ID: OrdererMSP
-    MSPDir: ../organizations/orderer/msp
+    MSPDir: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -21,7 +21,7 @@ Organizations:
   - &Hospital
     Name: HospitalMSP
     ID: HospitalMSP
-    MSPDir: ../organizations/hospital/msp
+    MSPDir: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/hospital.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -42,7 +42,7 @@ Organizations:
   - &Insurance
     Name: InsuranceMSP
     ID: InsuranceMSP
-    MSPDir: ../organizations/insurance/msp
+    MSPDir: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/insurance.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -63,7 +63,7 @@ Organizations:
   - &Regulatory
     Name: RegulatoryMSP
     ID: RegulatoryMSP
-    MSPDir: ../organizations/regulatory/msp
+    MSPDir: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/regulatory.medical.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -100,7 +100,7 @@ Application: &ApplicationDefaults
       Rule: "ANY Writers"
     Admins:
       Type: ImplicitMeta
-      Rule: "MAJORITY Admins"
+      Rule: "ANY Admins"
     LifecycleEndorsement:
       Type: ImplicitMeta
       Rule: "MAJORITY Endorsement"
@@ -120,16 +120,16 @@ Orderer: &OrdererDefaults
     Consenters:
       - Host: orderer0.orderer.medical.com
         Port: 7050
-        ClientTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer0.orderer.medical.com/tls/server.crt
+        ClientTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/tls/server.crt
+        ServerTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer0.orderer.medical.com/tls/server.crt
       - Host: orderer1.orderer.medical.com
         Port: 7051
-        ClientTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer1.orderer.medical.com/tls/server.crt
+        ClientTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/tls/server.crt
+        ServerTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer1.orderer.medical.com/tls/server.crt
       - Host: orderer2.orderer.medical.com
         Port: 7052
-        ClientTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
-        ServerTLSCert: ../organizations/orderer/orderers/orderer2.orderer.medical.com/tls/server.crt
+        ClientTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/tls/server.crt
+        ServerTLSCert: /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/orderer.medical.com/orderers/orderer2.orderer.medical.com/tls/server.crt
   BatchTimeout: 2s
   BatchSize:
     MaxMessageCount: 10
@@ -160,12 +160,12 @@ Channel: &ChannelDefaults
       Rule: "ANY Writers"
     Admins:
       Type: ImplicitMeta
-      Rule: "MAJORITY Admins"
+      Rule: "ANY Admins"
   Capabilities:
     <<: *ChannelCapabilities
 
 Profiles:
-  MedicalOrdererGenesis:
+  MedicalChannel:
     <<: *ChannelDefaults
     Orderer:
       <<: *OrdererDefaults
@@ -173,16 +173,6 @@ Profiles:
         - *OrdererOrg
       Capabilities:
         <<: *OrdererCapabilities
-    Consortiums:
-      MedicalConsortium:
-        Organizations:
-          - *Hospital
-          - *Insurance
-          - *Regulatory
-
-  MedicalChannel:
-    Consortium: MedicalConsortium
-    <<: *ChannelDefaults
     Application:
       <<: *ApplicationDefaults
       Organizations:
@@ -193,8 +183,13 @@ Profiles:
         <<: *ApplicationCapabilities
 
   PrivateDataChannel:
-    Consortium: MedicalConsortium
     <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
     Application:
       <<: *ApplicationDefaults
       Organizations:
@@ -204,8 +199,13 @@ Profiles:
         <<: *ApplicationCapabilities
 
   InsuranceChannel:
-    Consortium: MedicalConsortium
     <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
     Application:
       <<: *ApplicationDefaults
       Organizations:

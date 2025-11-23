@@ -480,6 +480,33 @@ contract AccessControlContract is MedicalAccessControl {
             false,
             false
         );
+
+        // Diagnostic Center permissions (same as Lab)
+        rolePermissions[DIAGNOSTIC_CENTER_ROLE][keccak256("READ")] = Permission(
+            true,
+            false,
+            false,
+            false,
+            false
+        );
+        rolePermissions[DIAGNOSTIC_CENTER_ROLE][keccak256("WRITE")] = Permission(
+            false,
+            true,
+            false,
+            false,
+            false
+        );
+
+        // Insurer permissions
+        // Insurers need READ permission to access data even with consent
+        // They cannot write, delete, share, or use emergency access
+        rolePermissions[INSURER_ROLE][keccak256("READ")] = Permission(
+            true,
+            false,
+            false,
+            false,
+            false
+        );
     }
 
     /**
@@ -517,6 +544,8 @@ contract AccessControlContract is MedicalAccessControl {
         if (hasRole(PATIENT_ROLE, _user)) return PATIENT_ROLE;
         if (hasRole(HOSPITAL_ROLE, _user)) return HOSPITAL_ROLE;
         if (hasRole(LAB_ROLE, _user)) return LAB_ROLE;
+        if (hasRole(DIAGNOSTIC_CENTER_ROLE, _user)) return DIAGNOSTIC_CENTER_ROLE;
+        if (hasRole(INSURER_ROLE, _user)) return INSURER_ROLE;
         if (hasRole(SYSTEM_ADMIN_ROLE, _user)) return SYSTEM_ADMIN_ROLE;
         return bytes32(0); // No known role
     }

@@ -1,0 +1,9 @@
+{
+  "encryptedData": "Z5zQVZWIK0Jmp0ExgqGka9XsLBjNYFWXp04Re1pSNYMUUmmQkPIOALmpZw/+BTAQTNX6GBrj6TRhoem/qHgucFMC7MEnJVBZvsel+YnE0+QmK/LadLiQTUzUd0NSBBlu67S8jOMlN28UVJN12cXmFJxzjAo7kwhD2Zk2SVQVpfQGhn7KPLXuVj1fz2bivFsN6Q6jU5Zuj/4M2xI5nbFdy3pJP5BwvDgOrS5V0HOjie2vOcitjytB6cQjFqgv9PhZExQIB/TMWfQcWxca3D6LFmL9T/dryR/rgFeoBvws/y1/cX28J7wPIPsu7Jb24VzEwxRf0YzaSR0jxRAJ+6ATdtYhCxLMtdSDNajkUtOxvimIL6c+yvlUNTEi5pM6iNcKL4w7ZVBE+BNoYYG9+ROyjFq1NEUOizPGwljX14vobd4pLz7GB5b3zHxOJBraEOhEXJFSTiXH2GxbgTwNt4pfNzedPSDjBoRWZQ5NCG0SEWYjqlY3pjsTMVVzpzjpy7Ytq7Ca5iYeWEndofeCLTul6v/uyIwnPqApeMn/EThgzyy8l1sRbpmaGc5g18Z43GmwbokGkPa+cMlVF2g9EsyaVBgbp5PUx/2JmnB04ij5YUUbyM/gULoRHQF2iomuiDgPTfzQTsJYptKieEEMITSZN6g2qe5h045AzA==",
+  "iv": "cf9de3aec9d049a6412e4517",
+  "tag": "46be00b6c8f015e8245852393e342b91",
+  "algorithm": "AES-256-GCM",
+  "timestamp": "2025-11-17T14:38:20.695Z",
+  "patientId": "hospital1",
+  "dataLength": 505
+}

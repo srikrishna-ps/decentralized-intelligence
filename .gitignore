@@ -1,5 +1,7 @@
 node_modules
 .env
+.env.local
+.env.crypto
 
 # Hardhat files
 /cache
@@ -15,3 +17,7 @@ node_modules
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-31337
+hyperledger-fabric-windows-amd64-2.5.4.tar
+hyperledger-fabric-windows-amd64-2.5.4.tar.gz
+fabric-binaries/
+fabric-samples/

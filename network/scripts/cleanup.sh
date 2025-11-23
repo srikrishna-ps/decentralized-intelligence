@@ -11,22 +11,14 @@ print_status() {
 print_status "Cleaning up previous network setup..."
 
 # Stop and remove containers
-docker-compose -f docker/docker-compose.yaml down --volumes --remove-orphans
+docker-compose -f docker/docker-compose.yaml down --volumes --remove-orphans 2>/dev/null || true
 
 # Remove generated crypto material
-rm -rf organizations/hospital/ca
-rm -rf organizations/hospital/msp
-rm -rf organizations/hospital/peers
-rm -rf organizations/hospital/users
-rm -rf organizations/insurance/ca
-rm -rf organizations/insurance/msp
-rm -rf organizations/insurance/peers
-rm -rf organizations/insurance/users
-rm -rf organizations/regulatory/ca
-rm -rf organizations/regulatory/msp
-rm -rf organizations/regulatory/peers
-rm -rf organizations/regulatory/users
-rm -rf organizations/orderer
+rm -rf organizations/ordererOrganizations
+rm -rf organizations/peerOrganizations
+rm -rf organizations/hospital
+rm -rf organizations/insurance
+rm -rf organizations/regulatory
 
 # Remove channel artifacts
 rm -rf channel-artifacts/*
@@ -36,3 +28,4 @@ rm -rf system-genesis-block/*
 docker volume prune -f
 
 print_status "Cleanup completed successfully!"
+
