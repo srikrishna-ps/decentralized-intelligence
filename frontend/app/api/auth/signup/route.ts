@@ -21,12 +21,22 @@ export async function POST(req: NextRequest) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Determine initial status
+        // Patients are active by default. Professionals need admin approval.
+        // NOTE: The User model also enforces this in the pre-save hook as a failsafe.
+        const normalizedRole = role ? role.toLowerCase().trim() : 'patient';
+        let initialStatus = 'active';
+        if (['doctor', 'diagnostic', 'insurer'].includes(normalizedRole)) {
+            initialStatus = 'pending';
+        }
+
         // Create user
         const user = await User.create({
             email,
             name,
             password: hashedPassword,
-            role: role || "patient",
+            role: normalizedRole,
+            status: initialStatus
         });
 
         return NextResponse.json({

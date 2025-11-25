@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -24,9 +25,15 @@ export default function LoginPage() {
         });
 
         if (result?.error) {
-            setError("Invalid email or password");
+            let msg = result.error;
+            if (msg === "CredentialsSignin") {
+                msg = "Invalid email or password";
+            }
+            setError(msg);
+            toast.error(msg);
             setLoading(false);
         } else {
+            toast.success("Welcome back! Signing you in...");
             router.push("/");
             router.refresh();
         }

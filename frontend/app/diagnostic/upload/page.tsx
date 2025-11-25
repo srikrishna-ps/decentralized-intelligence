@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function DiagnosticUploadPage() {
     const { data: session, status } = useSession();
@@ -28,7 +29,7 @@ export default function DiagnosticUploadPage() {
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!uploadForm.file) {
-            alert("Please select a file");
+            toast.error("Please select a file");
             return;
         }
 
@@ -50,14 +51,14 @@ export default function DiagnosticUploadPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Test result uploaded successfully!");
+                toast.success("Test result uploaded successfully!");
                 setUploadForm({ file: null, patientId: "", title: "", description: "", testType: "lab_report" });
             } else {
-                alert(data.error || "Upload failed");
+                toast.error(data.error || "Upload failed");
             }
         } catch (error: any) {
             console.error("Upload error:", error);
-            alert("Upload failed. Check backend connection.");
+            toast.error("Upload failed. Check backend connection.");
         } finally {
             setUploading(false);
         }

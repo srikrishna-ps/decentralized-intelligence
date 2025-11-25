@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -35,10 +36,17 @@ export default function SignupPage() {
                 throw new Error(data.message || "Failed to create account");
             }
 
-            alert("Account created successfully! Please sign in.");
+            if (formData.role === 'patient') {
+                toast.success("Account created! Please sign in.");
+            } else {
+                toast.success("Account created! Pending admin approval.");
+            }
+
             router.push("/login");
         } catch (err: any) {
-            setError(err.message || "Failed to create account");
+            const msg = err.message || "Failed to create account";
+            setError(msg);
+            toast.error(msg);
             setLoading(false);
         }
     };
@@ -122,7 +130,6 @@ export default function SignupPage() {
                                 <option value="doctor">Doctor</option>
                                 <option value="diagnostic">Diagnostic Center</option>
                                 <option value="insurer">Insurance Provider</option>
-                                <option value="admin">Administrator</option>
                             </select>
                         </div>
 

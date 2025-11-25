@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import DoctorSidebar from "@/components/sidebars/DoctorSidebar";
+import { toast } from "react-hot-toast";
 
 export default function DoctorUploadPage() {
     const { data: session, status } = useSession();
@@ -27,7 +28,7 @@ export default function DoctorUploadPage() {
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!uploadForm.file) {
-            alert("Please select a file");
+            toast.error("Please select a file");
             return;
         }
 
@@ -48,14 +49,14 @@ export default function DoctorUploadPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Clinical note uploaded successfully!");
+                toast.success("Clinical note uploaded successfully!");
                 setUploadForm({ file: null, patientId: "", title: "", description: "" });
             } else {
-                alert(data.error || "Upload failed");
+                toast.error(data.error || "Upload failed");
             }
         } catch (error: any) {
             console.error("Upload error:", error);
-            alert("Upload failed. Check backend connection.");
+            toast.error("Upload failed. Check backend connection.");
         } finally {
             setUploading(false);
         }
@@ -77,7 +78,7 @@ export default function DoctorUploadPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                providerId={session.user.providerId || ""}
+                doctorId={session.user.providerId || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">

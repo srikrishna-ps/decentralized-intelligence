@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import InsurerSidebar from "@/components/sidebars/InsurerSidebar";
+import { toast } from "react-hot-toast";
 
 export default function InsurerRequestsPage() {
     const { data: session, status } = useSession();
@@ -57,16 +58,16 @@ export default function InsurerRequestsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Access request sent successfully!");
+                toast.success("Access request sent successfully!");
                 setPatientId("");
                 setReason("");
                 fetchRequests();
             } else {
-                alert(data.error || "Request failed");
+                toast.error(data.error || "Request failed");
             }
         } catch (error: any) {
             console.error("Request error:", error);
-            alert("Request failed. Check backend connection.");
+            toast.error("Request failed. Check backend connection.");
         } finally {
             setLoading(false);
         }
@@ -166,8 +167,8 @@ export default function InsurerRequestsPage() {
                                                 <td className="px-8 py-4 text-sm text-gray-600">{new Date(request.createdAt).toLocaleDateString()}</td>
                                                 <td className="px-8 py-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${request.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                            request.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                                'bg-yellow-100 text-yellow-700'
+                                                        request.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                            'bg-yellow-100 text-yellow-700'
                                                         }`}>
                                                         {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                                                     </span>

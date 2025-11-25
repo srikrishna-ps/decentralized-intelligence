@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import DoctorSidebar from "@/components/sidebars/DoctorSidebar";
 import api from "@/lib/api";
+import { toast } from "react-hot-toast";
 
 export default function DoctorPatientsPage() {
     const { data: session, status } = useSession();
@@ -51,12 +52,12 @@ export default function DoctorPatientsPage() {
                 setAccessGranted(hasAccess);
                 setSearchResult({ id: patientId, name: "Patient Found" }); // Placeholder name as we might not get it
             } else {
-                alert("Patient not found or invalid ID");
+                toast.error("Patient not found or invalid ID");
             }
 
         } catch (error: any) {
             console.error("Search error:", error);
-            alert("Error searching for patient");
+            toast.error("Error searching for patient");
         } finally {
             setLoading(false);
         }
@@ -69,9 +70,9 @@ export default function DoctorPatientsPage() {
                 patientId,
                 reason: "Medical consultation",
             });
-            alert("Access request sent successfully!");
+            toast.success("Access request sent successfully!");
         } catch (error: any) {
-            alert(error.response?.data?.message || "Failed to request access");
+            toast.error(error.response?.data?.message || "Failed to request access");
         }
     };
 
@@ -91,7 +92,7 @@ export default function DoctorPatientsPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                providerId={session.user.providerId || ""}
+                doctorId={session.user.providerId || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">

@@ -97,6 +97,19 @@ export default function PatientDashboard() {
             link: '/patient/ai',
             bgColor: 'bg-gray-50',
             iconColor: 'text-gray-600'
+        },
+        {
+            id: 'activity',
+            title: 'Activity Log',
+            description: 'View your recent account activity.',
+            icon: (
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            ),
+            link: '/patient/activity',
+            bgColor: 'bg-cyan-50',
+            iconColor: 'text-cyan-600'
         }
     ];
 

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/sidebars/AdminSidebar";
+import { toast } from "react-hot-toast";
 
 export default function AdminUsersPage() {
     const { data: session, status } = useSession();
@@ -40,7 +41,32 @@ export default function AdminUsersPage() {
         }
     };
 
-    const filteredUsers = filter === "all" ? users : users.filter((user: any) => user.role === filter);
+    const handleStatusUpdate = async (userId: string, newStatus: 'active' | 'rejected') => {
+        try {
+            const res = await fetch(`${backendUrl}/api/admin/users/${userId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                toast.success(`User ${newStatus === 'active' ? 'approved' : 'rejected'} successfully`);
+                fetchUsers(); // Refresh list
+            } else {
+                toast.error(data.error || 'Failed to update status');
+            }
+        } catch (error) {
+            console.error('Update error:', error);
+            toast.error('Failed to update status');
+        }
+    };
+
+    const filteredUsers = filter === "all"
+        ? users
+        : filter === "pending"
+            ? users.filter((user: any) => user.status === 'pending')
+            : users.filter((user: any) => user.role === filter && user.status !== 'pending');
 
     if (status === "loading" || loading) {
         return (
@@ -58,7 +84,7 @@ export default function AdminUsersPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                adminId={session.user.id || ""}
+                adminId={(session?.user as any)?.id || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">
@@ -70,7 +96,7 @@ export default function AdminUsersPage() {
 
                     {/* Filters */}
                     <div className="flex border-b border-gray-200 mb-6">
-                        {['all', 'patient', 'doctor', 'diagnostic', 'insurer'].map((role) => (
+                        {['all', 'pending', 'patient', 'doctor', 'diagnostic', 'insurer'].map((role) => (
                             <button
                                 key={role}
                                 onClick={() => setFilter(role)}
@@ -79,7 +105,7 @@ export default function AdminUsersPage() {
                                     : 'border-transparent text-gray-600 hover:text-gray-900'
                                     }`}
                             >
-                                {role}
+                                {role === 'pending' ? 'Pending Approvals' : role}
                             </button>
                         ))}
                     </div>
@@ -95,18 +121,21 @@ export default function AdminUsersPage() {
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-600">Role</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-600">Joined Date</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
+                                        {filter === 'pending' && (
+                                            <th className="px-6 py-4 text-sm font-semibold text-gray-600">Actions</th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {filteredUsers.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                                                 No users found matching the filter.
                                             </td>
                                         </tr>
                                     ) : (
                                         filteredUsers.map((user: any) => (
-                                            <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <div className="font-medium text-gray-900">{user.name}</div>
                                                 </td>
@@ -125,10 +154,31 @@ export default function AdminUsersPage() {
                                                     {new Date(user.createdAt).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
-                                                        Active
+                                                    <span className={`px-2 py-1 rounded text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-700' :
+                                                        user.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                            'bg-red-100 text-red-700'
+                                                        }`}>
+                                                        {user.status || 'Active'}
                                                     </span>
                                                 </td>
+                                                {filter === 'pending' && (
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(user.id, 'active')}
+                                                                className="px-3 py-1 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors"
+                                                            >
+                                                                Approve
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(user.id, 'rejected')}
+                                                                className="px-3 py-1 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors"
+                                                            >
+                                                                Reject
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))
                                     )}

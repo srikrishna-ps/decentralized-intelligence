@@ -28,16 +28,16 @@ export default function DoctorDashboard() {
 
     const features = [
         {
-            title: "Request Access",
-            description: "Request access to patient medical records",
+            title: "My Patients",
+            description: "Manage your patient list",
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
             ),
-            link: "/doctor/requests",
-            bgColor: "bg-cyan-50",
-            iconColor: "text-cyan-600"
+            link: "/doctor/patients",
+            bgColor: "bg-gray-50",
+            iconColor: "text-gray-600"
         },
         {
             title: "View Records",
@@ -60,6 +60,18 @@ export default function DoctorDashboard() {
                 </svg>
             ),
             link: "/doctor/upload",
+            bgColor: "bg-cyan-50",
+            iconColor: "text-cyan-600"
+        },
+        {
+            title: "Request Access",
+            description: "Request access to patient medical records",
+            icon: (
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+            ),
+            link: "/doctor/requests",
             bgColor: "bg-cyan-50",
             iconColor: "text-cyan-600"
         },

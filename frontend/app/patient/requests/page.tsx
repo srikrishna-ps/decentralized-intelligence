@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
+import { toast } from "react-hot-toast";
 
 export default function PatientRequestsPage() {
     const { data: session, status } = useSession();
@@ -56,14 +57,14 @@ export default function PatientRequestsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Access request approved!");
+                toast.success("Access request approved!");
                 fetchRequests();
             } else {
-                alert(data.error || "Failed to approve request");
+                toast.error(data.error || "Failed to approve request");
             }
         } catch (error: any) {
             console.error("Approve error:", error);
-            alert("Failed to approve request");
+            toast.error("Failed to approve request");
         }
     };
 
@@ -81,14 +82,14 @@ export default function PatientRequestsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Access request rejected");
+                toast.success("Access request rejected");
                 fetchRequests();
             } else {
-                alert(data.error || "Failed to reject request");
+                toast.error(data.error || "Failed to reject request");
             }
         } catch (error: any) {
             console.error("Reject error:", error);
-            alert("Failed to reject request");
+            toast.error("Failed to reject request");
         }
     };
 

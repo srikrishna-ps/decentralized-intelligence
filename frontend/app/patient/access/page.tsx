@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
+import { toast } from "react-hot-toast";
 
 export default function PatientAccessPage() {
     const { data: session, status } = useSession();
@@ -64,16 +65,16 @@ export default function PatientAccessPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Access granted successfully!");
+                toast.success("Access granted successfully!");
                 setProviderId("");
                 setReason("");
                 fetchAccessGrants();
             } else {
-                alert(data.error || "Failed to grant access");
+                toast.error(data.error || "Failed to grant access");
             }
         } catch (error: any) {
             console.error("Grant access error:", error);
-            alert("Failed to grant access. Check backend connection.");
+            toast.error("Failed to grant access. Check backend connection.");
         } finally {
             setLoading(false);
         }
@@ -92,14 +93,14 @@ export default function PatientAccessPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Access revoked successfully!");
+                toast.success("Access revoked successfully!");
                 fetchAccessGrants();
             } else {
-                alert(data.error || "Failed to revoke access");
+                toast.error(data.error || "Failed to revoke access");
             }
         } catch (error: any) {
             console.error("Revoke access error:", error);
-            alert("Failed to revoke access");
+            toast.error("Failed to revoke access");
         }
     };
 

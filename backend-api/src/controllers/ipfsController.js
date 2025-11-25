@@ -22,8 +22,24 @@ exports.getFile = async (req, res) => {
         // Real IPFS Gateway
         const publicGatewayUrl = `https://dweb.link/ipfs/${ipfsHash}`;
 
-        // For this implementation, let's redirect to the gateway which triggers browser download/view
-        res.redirect(publicGatewayUrl);
+        // PROXY MODE:
+        // Fetch from gateway and pipe to client to avoid CORS/Gateway issues
+        const response = await fetch(publicGatewayUrl);
+
+        if (!response.ok) {
+            throw new Error(`Gateway responded with ${response.status}`);
+        }
+
+        // Set headers
+        res.setHeader('Content-Type', response.headers.get('content-type') || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${ipfsHash}"`);
+
+        // Pipe the stream
+        const { pipeline } = require('stream');
+        const { promisify } = require('util');
+        const streamPipeline = promisify(pipeline);
+
+        await streamPipeline(response.body, res);
 
     } catch (error) {
         console.error('IPFS Get File Error:', error);

@@ -1,13 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
 
 type TabType = 'diagnosis' | 'summarize' | 'explain' | 'symptoms';
 
-export default function PatientAIPage() {
+export default function PatientAI() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const pathname = usePathname();
@@ -30,7 +31,7 @@ export default function PatientAIPage() {
         // TODO: Implement AI API call
         setTimeout(() => {
             setLoading(false);
-            alert("AI analysis will be integrated here");
+            toast.success("AI analysis will be integrated here");
         }, 2000);
     };
 

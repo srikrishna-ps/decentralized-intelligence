@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
+import { toast } from "react-hot-toast";
 
 export default function PatientRecordsPage() {
     const { data: session, status } = useSession();
@@ -63,7 +64,7 @@ export default function PatientRecordsPage() {
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!uploadForm.file) {
-            alert("Please select a file");
+            toast.error("Please select a file");
             return;
         }
 
@@ -84,16 +85,16 @@ export default function PatientRecordsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Record uploaded successfully!");
+                toast.success("Record uploaded successfully!");
                 setShowUploadModal(false);
                 setUploadForm({ file: null, title: "", description: "", type: "lab_report" });
                 fetchRecords();
             } else {
-                alert(data.error || "Upload failed");
+                toast.error(data.error || "Upload failed");
             }
         } catch (error: any) {
             console.error("Upload error:", error);
-            alert("Upload failed. Please check backend connection.");
+            toast.error("Upload failed. Please check backend connection.");
         } finally {
             setUploading(false);
         }
@@ -124,15 +125,15 @@ export default function PatientRecordsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Record updated successfully!");
+                toast.success("Record updated successfully!");
                 setShowEditModal(false);
                 fetchRecords();
             } else {
-                alert(data.error || "Update failed");
+                toast.error(data.error || "Update failed");
             }
         } catch (error) {
             console.error("Update error:", error);
-            alert("Update failed");
+            toast.error("Update failed");
         }
     };
 
@@ -149,14 +150,14 @@ export default function PatientRecordsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert(data.message);
+                toast.success(data.message);
                 fetchRecords();
             } else {
-                alert(data.error || "Operation failed");
+                toast.error(data.error || "Operation failed");
             }
         } catch (error) {
             console.error("Archive error:", error);
-            alert("Operation failed");
+            toast.error("Operation failed");
         }
     };
 
@@ -173,14 +174,14 @@ export default function PatientRecordsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert("Record deleted successfully!");
+                toast.success("Record deleted successfully!");
                 fetchRecords();
             } else {
-                alert(data.error || "Delete failed");
+                toast.error(data.error || "Delete failed");
             }
         } catch (error) {
             console.error("Delete error:", error);
-            alert("Delete failed");
+            toast.error("Delete failed");
         }
     };
 

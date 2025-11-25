@@ -21,6 +21,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         default: 'patient',
     },
+    status: {
+        type: String,
+        enum: ['active', 'pending', 'rejected'],
+        default: 'active',
+    },
     googleId: {
         type: String,
         unique: true,
@@ -46,9 +51,15 @@ const UserSchema = new mongoose.Schema({
     },
 });
 
-// Generate unique IDs on creation
+// Generate unique IDs and enforce status on creation
 UserSchema.pre('save', async function () {
     if (this.isNew) {
+        // Enforce status for professional roles
+        // This is the FINAL AUTHORITY on status
+        if (['doctor', 'diagnostic', 'insurer'].includes(this.role)) {
+            this.status = 'pending';
+        }
+
         if (this.role === 'patient' && !this.patientId) {
             this.patientId = `PAT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
         } else if (['doctor', 'diagnostic', 'insurer'].includes(this.role) && !this.providerId) {

@@ -30,6 +30,14 @@ export const authOptions: AuthOptions = {
                         return null;
                     }
 
+                    // Check Status
+                    if (user.status === 'pending') {
+                        throw new Error("Your account is pending admin approval.");
+                    }
+                    if (user.status === 'rejected') {
+                        throw new Error("Your account registration was rejected.");
+                    }
+
                     const isValid = await bcrypt.compare(credentials.password, user.password);
                     if (!isValid) {
                         return null;
@@ -43,9 +51,9 @@ export const authOptions: AuthOptions = {
                         patientId: user.patientId,
                         providerId: user.providerId,
                     };
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Auth error:", error);
-                    return null;
+                    throw new Error(error.message || "Authentication failed");
                 }
             },
         }),
@@ -69,6 +77,11 @@ export const authOptions: AuthOptions = {
                         user.patientId = newUser.patientId;
                         user.providerId = newUser.providerId;
                     } else {
+                        // Check Status for existing users
+                        if (existingUser.status === 'pending' || existingUser.status === 'rejected') {
+                            return false; // Deny access
+                        }
+
                         user.role = existingUser.role;
                         user.patientId = existingUser.patientId;
                         user.providerId = existingUser.providerId;

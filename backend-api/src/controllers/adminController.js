@@ -8,14 +8,13 @@ const User = require('../models/User');
 const handleError = (res, error) => {
     console.error('Error:', error);
     res.status(500).json({ success: false, error: error.message || 'Internal Server Error' });
-};
-
+}
 const adminController = {
     async getAllUsers(req, res) {
         try {
             const User = mongoose.model('User');
-            const users = await User.find({}).select('-password').sort({ createdAt: -1 }).lean();
-
+            // Exclude the specific admin email
+            const users = await User.find({ email: { $ne: 'test.medichain@gmail.com' } }, '-password');
             res.json({
                 success: true,
                 users: users.map(u => ({
@@ -23,8 +22,7 @@ const adminController = {
                     name: u.name,
                     email: u.email,
                     role: u.role,
-                    patientId: u.patientId,
-                    providerId: u.providerId,
+                    status: u.status,
                     createdAt: u.createdAt
                 }))
             });
@@ -33,10 +31,42 @@ const adminController = {
         }
     },
 
+    async updateUserStatus(req, res) {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+            const User = mongoose.model('User');
+
+            const user = await User.findByIdAndUpdate(
+                id,
+                { status },
+                { new: true }
+            );
+
+            if (!user) {
+                return res.status(404).json({ success: false, error: 'User not found' });
+            }
+
+            res.json({ success: true, user });
+        } catch (error) {
+            handleError(res, error);
+        }
+    },
+
+    async getAllRecords(req, res) {
+        try {
+            const records = await MedicalRecord.find().sort({ createdAt: -1 });
+            res.json({ success: true, records });
+        } catch (error) {
+            handleError(res, error);
+        }
+    },
+
     async getSystemStats(req, res) {
         try {
             const User = mongoose.model('User');
-            const totalUsers = await User.countDocuments();
+            // Exclude admin from count
+            const totalUsers = await User.countDocuments({ email: { $ne: 'test.medichain@gmail.com' } });
             const totalRecords = await MedicalRecord.countDocuments();
             const totalAccessGrants = await AccessGrant.countDocuments({ status: 'active' });
             const totalAccessRequests = await AccessRequest.countDocuments({ status: 'pending' });
@@ -46,6 +76,7 @@ const adminController = {
             console.log('System Stats Debug:', { totalUsers, totalRecords, totalAccessGrants, totalAccessRequests, totalTransactions });
 
             const usersByRole = await User.aggregate([
+                { $match: { email: { $ne: 'test.medichain@gmail.com' } } },
                 { $group: { _id: '$role', count: { $sum: 1 } } }
             ]);
 
@@ -57,32 +88,8 @@ const adminController = {
                     totalAccessGrants,
                     totalAccessRequests,
                     totalTransactions,
-                    usersByRole: usersByRole.reduce((acc, item) => {
-                        acc[item._id] = item.count;
-                        return acc;
-                    }, {})
+                    usersByRole
                 }
-            });
-        } catch (error) {
-            handleError(res, error);
-        }
-    },
-
-    async getAllRecords(req, res) {
-        try {
-            const records = await MedicalRecord.find({}).sort({ createdAt: -1 }).limit(100).lean();
-
-            res.json({
-                success: true,
-                records: records.map(r => ({
-                    id: r.recordId,
-                    title: r.title,
-                    type: r.type,
-                    patientId: r.patientId,
-                    providerId: r.providerId,
-                    status: r.status,
-                    createdAt: r.createdAt
-                }))
             });
         } catch (error) {
             handleError(res, error);
