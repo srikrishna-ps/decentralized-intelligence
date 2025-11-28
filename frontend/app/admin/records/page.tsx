@@ -55,7 +55,7 @@ export default function AdminRecordsPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                adminId={session.user.id || ""}
+                adminId={session.user.email || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">
