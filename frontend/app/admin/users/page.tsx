@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                adminId={(session?.user as any)?.id || ""}
+                adminId={session.user.email || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">
