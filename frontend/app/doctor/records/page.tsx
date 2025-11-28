@@ -57,7 +57,7 @@ export default function DoctorRecordsPage() {
                 currentPath={pathname}
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                providerId={session.user.providerId || ""}
+                doctorId={session.user.providerId || ""}
             />
 
             <main className="flex-1 ml-64 p-8 overflow-y-auto">
