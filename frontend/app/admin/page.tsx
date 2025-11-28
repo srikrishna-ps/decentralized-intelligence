@@ -64,7 +64,7 @@ export default function AdminDashboard() {
                 currentPath="/admin"
                 userName={session.user.name || ""}
                 userEmail={session.user.email || ""}
-                adminId={session.user.id || "ADMIN"}
+                adminId={session.user.email || "ADMIN"}
             />
 
             {/* Main Content */}
