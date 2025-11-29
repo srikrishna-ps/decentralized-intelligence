@@ -38,8 +38,45 @@ export default function PatientAI() {
 
             switch (activeTab) {
                 case 'diagnosis':
-                    prompt = `Patient presents with: ${formData.symptoms}. \nMedical History: ${formData.medicalHistory}. \nPlease provide a comprehensive differential diagnosis and recommended next steps.`;
-                    context = "You are a helpful medical DL assistant. Provide clear, professional medical insights but always include a disclaimer that this is not a substitute for professional medical advice.";
+                    prompt = `*Role:* You are an advanced AI Diagnostic Assistant, specializing in generating rapid, multi-tiered analyses of user-provided health scenarios.
+
+*Constraint:* You MUST generate your output in exactly two distinct parts as specified below. Do not add any conversational text or preamble.
+
+*User Input:* Patient Symptoms: ${formData.symptoms}. Medical History: ${formData.medicalHistory}
+
+*
+
+## Preliminary Suggestive Analysis
+
+### Part 1: Clear Diagnostics & First-Aid XAI (Explainable AI)
+
+*Goal:* To provide a clear, simple, and immediate interpretation of the user's input, along with easy-to-understand "first aid" steps. This section is for *direct user interaction*.
+
+*Tone/Style:* Simple, empathetic, clear, and non-technical, using common language.
+
+*Required Content:*
+1.  *What Happened (Simple Terms):* A brief, plain-language diagnosis or summary of the condition/symptoms described in the user input.
+2.  *Why This Might Be Happening (Simple XAI):* A simple explanation of the likely mechanism or cause, avoiding complex jargon.
+3.  *First Aid & Next Steps (Immediate Action):* Clear, actionable, simple steps the user should take immediately (e.g., rest, hydration, call a doctor, monitor temperature).
+4.  *Important Disclaimer:* A strong, simple statement emphasizing that this is not a substitute for professional medical advice.
+
+---
+
+### Part 2: Professional Medical Report & Detailed Treatment Plan
+
+*Goal:* To generate a comprehensive, technical analysis suitable for a medical professional.
+
+*Tone/Style:* Formal, professional, technical, and data-driven, using appropriate medical terminology (ICD codes, physiological terms, relevant technology).
+
+*Required Content:*
+1.  *Formal Diagnosis (DDX/Primary):* The formal, likely diagnosis (or differential diagnoses - DDx), using standard medical nomenclature.
+2.  *Relevant Medical Technologies:* A hypothetical list of diagnostic technologies relevant to the scenario (e.g., specified lab panels, MRI sequences, CT modalities, genetic sequencing, specialized scopes) that would be used to confirm the diagnosis.
+3.  *Pathophysiological Assessment:* A technical explanation of the underlying biological and physiological processes leading to the symptoms.
+4.  *Detailed Treatment Plan (Stage 1):* A professional, detailed outline of the initial treatment protocol, including:
+    * *Pharmacological Interventions:* (e.g., suggested classes of drugs, dosages/routes, rationale).
+    * *Non-Pharmacological Interventions:* (e.g., specialized diet, physical therapy, surgical consultation).
+    * *Monitoring Parameters:* Key vital signs and lab results that need continuous or periodic monitoring.`;
+                    context = "You are an advanced AI Diagnostic Assistant. Follow the strict output format provided in the prompt.";
                     break;
                 case 'summarize':
                     // In a real app, we would fetch records here. For now, we'll use a placeholder or what's in history.

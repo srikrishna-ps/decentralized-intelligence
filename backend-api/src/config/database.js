@@ -8,9 +8,9 @@ const connectDB = async () => {
             throw new Error('MONGODB_URI is not defined in environment variables');
         }
 
-        // Force the database name to ensure consistency
+        // Connection options
         const options = {
-            dbName: 'medichain1'
+            bufferCommands: false,
         };
 
         await mongoose.connect(mongoURI, options);
