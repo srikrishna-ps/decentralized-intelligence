@@ -39,7 +39,7 @@ export default function PatientAI() {
             switch (activeTab) {
                 case 'diagnosis':
                     prompt = `Patient presents with: ${formData.symptoms}. \nMedical History: ${formData.medicalHistory}. \nPlease provide a comprehensive differential diagnosis and recommended next steps.`;
-                    context = "You are a helpful medical AI assistant. Provide clear, professional medical insights but always include a disclaimer that this is not a substitute for professional medical advice.";
+                    context = "You are a helpful medical DL assistant. Provide clear, professional medical insights but always include a disclaimer that this is not a substitute for professional medical advice.";
                     break;
                 case 'summarize':
                     // In a real app, we would fetch records here. For now, we'll use a placeholder or what's in history.

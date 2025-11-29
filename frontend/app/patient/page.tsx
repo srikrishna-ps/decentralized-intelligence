@@ -87,7 +87,7 @@ export default function PatientDashboard() {
         },
         {
             id: 'ai',
-            title: 'AI Assistant',
+            title: 'DL Assistant',
             description: 'Get insights from your medical data.',
             icon: (
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
