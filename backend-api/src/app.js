@@ -6,9 +6,15 @@ const morgan = require('morgan');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(morgan('dev'));
+
+// Debug logging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} from ${req.headers.origin}`);
+    next();
+});
 
 // Routes
 const patientRoutes = require('./routes/patientRoutes');
@@ -34,5 +40,8 @@ app.use('/api/insurer', insurerRoutes);
 app.use('/api/admin', adminRoutes);
 const ipfsRoutes = require('./routes/ipfsRoutes');
 app.use('/api/ipfs', ipfsRoutes);
+
+const aiRoutes = require('./routes/aiRoutes');
+app.use('/api/ai', aiRoutes);
 
 module.exports = app;

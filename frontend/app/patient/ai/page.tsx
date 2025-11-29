@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
+import api from "@/lib/api";
 import PatientSidebar from "@/components/sidebars/PatientSidebar";
 
 type TabType = 'diagnosis' | 'summarize' | 'explain' | 'symptoms';
@@ -14,6 +15,7 @@ export default function PatientAI() {
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<TabType>('diagnosis');
     const [loading, setLoading] = useState(false);
+    const [aiResponse, setAiResponse] = useState("");
     const [formData, setFormData] = useState({
         symptoms: "",
         medicalHistory: "",
@@ -28,11 +30,48 @@ export default function PatientAI() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // TODO: Implement AI API call
-        setTimeout(() => {
+        setAiResponse("");
+
+        try {
+            let prompt = "";
+            let context = "";
+
+            switch (activeTab) {
+                case 'diagnosis':
+                    prompt = `Patient presents with: ${formData.symptoms}. \nMedical History: ${formData.medicalHistory}. \nPlease provide a comprehensive differential diagnosis and recommended next steps.`;
+                    context = "You are a helpful medical AI assistant. Provide clear, professional medical insights but always include a disclaimer that this is not a substitute for professional medical advice.";
+                    break;
+                case 'summarize':
+                    // In a real app, we would fetch records here. For now, we'll use a placeholder or what's in history.
+                    prompt = `Please summarize the following medical history: ${formData.medicalHistory}`;
+                    context = "Summarize the medical records concisely, highlighting key conditions and treatments.";
+                    break;
+                case 'explain':
+                    prompt = `Explain these lab results in simple terms: ${formData.labResults}`;
+                    context = "Explain medical lab results to a patient in plain English, avoiding jargon where possible.";
+                    break;
+                case 'symptoms':
+                    prompt = `Analyze these symptoms: ${formData.symptoms}`;
+                    context = "Analyze the symptoms and suggest potential causes and urgency levels.";
+                    break;
+            }
+
+            const res = await api.post('/ai/generate', { prompt, context });
+
+            if (res.data.success) {
+                setAiResponse(res.data.data);
+                toast.success("Analysis complete");
+            } else {
+                toast.error(res.data.error || "Failed to generate response");
+            }
+        } catch (error: any) {
+            console.error("AI Error:", error);
+            const errorMessage = error.response?.data?.error || error.message;
+            const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
+            toast.error(`Failed: ${errorMessage} (Target: ${apiUrl})`);
+        } finally {
             setLoading(false);
-            toast.success("AI analysis will be integrated here");
-        }, 2000);
+        }
     };
 
     if (status === "loading") {
@@ -84,6 +123,21 @@ export default function PatientAI() {
                     </div>
 
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                        {aiResponse && (
+                            <div className="mb-8 p-6 bg-cyan-50 border border-cyan-100 rounded-lg">
+                                <h3 className="text-lg font-semibold text-cyan-900 mb-2">AI Analysis</h3>
+                                <div className="prose prose-cyan max-w-none text-gray-800 whitespace-pre-wrap">
+                                    {aiResponse}
+                                </div>
+                                <button
+                                    onClick={() => setAiResponse("")}
+                                    className="mt-4 text-sm text-cyan-700 hover:text-cyan-900 font-medium"
+                                >
+                                    Clear Result
+                                </button>
+                            </div>
+                        )}
+
                         {activeTab === 'diagnosis' && (
                             <div>
                                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Comprehensive Diagnosis Assistant</h3>
