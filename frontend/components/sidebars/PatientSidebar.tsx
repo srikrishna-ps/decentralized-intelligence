@@ -84,8 +84,8 @@ export default function PatientSidebar({ currentPath, userName, userEmail, patie
                 </Link>
 
                 <Link
-                    href="/patient/ai"
-                    className={`flex items-center px-6 py-3 ${isActive("/patient/ai")
+                    href="/patient/dl"
+                    className={`flex items-center px-6 py-3 ${isActive("/patient/dl")
                         ? "bg-gray-100 text-gray-900 border-r-4 border-cyan-600"
                         : "text-gray-700 hover:bg-gray-100"
                         }`}
