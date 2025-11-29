@@ -56,7 +56,7 @@ export default function PatientAI() {
                     break;
             }
 
-            const res = await api.post('/ai/generate', { prompt, context });
+            const res = await api.post('/api/ai/generate', { prompt, context });
 
             if (res.data.success) {
                 setAiResponse(res.data.data);
